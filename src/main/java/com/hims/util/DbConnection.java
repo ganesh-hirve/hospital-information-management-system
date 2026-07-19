@@ -27,7 +27,7 @@ public class DbConnection {
 		if (con != null) {
 			System.out.println("Connected...");
 		} else {
-			System.out.println("Not connected..");
+			System.out.println("Not connected.."); 
 		}
 	}
 }
