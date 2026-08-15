@@ -1,1 +1,23 @@
 /target/
+src/main/resources/config.properties
+
+# Environment variables
+.env
+
+# Maven build files
+target/
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# IntelliJ
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# Logs
+*.log

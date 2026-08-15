@@ -1,10 +1,12 @@
 package com.hims;
 
+import com.hims.view.Dashboard;
+
 /**
- * Hello world!
+ * Application entry point — launches the Hospital Management System console.
  */
 public class App {
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        new Dashboard().run();
     }
 }

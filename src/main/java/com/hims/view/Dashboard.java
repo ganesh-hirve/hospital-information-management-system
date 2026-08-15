@@ -5,52 +5,54 @@ import java.io.InputStreamReader;
 
 import com.hims.controller.AuthController;
 import com.hims.dto.UserDTO;
-import com.hims.enums.Role;
+import com.hims.enums.UserStatus;
 
 public class Dashboard {
 
-	public static void main(String[] args) {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		try {
-			AuthController user=new AuthController();
-		System.out.println("--------------------------");
-		System.out.println("HOSPITAL MANAGEMENT SYSTEM");
-		System.out.println("--------------------------");
-		System.out.println("LOGIN:");
-		System.out.println("Enter Email:");
-		String email=br.readLine();
-		System.out.println("Enter password:");
-		String password=br.readLine();
-		UserDTO loggedInUser = user.adminLogin(email, password);
+    private final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-		if (loggedInUser != null) {
+    public void run() {
+        try {
+            AuthController authController = new AuthController();
 
-		    switch (loggedInUser.getRole()) {
+            System.out.println("==================================");
+            System.out.println("  HOSPITAL MANAGEMENT SYSTEM");
+            System.out.println("==================================");
+            System.out.println("LOGIN");
+            System.out.println("----------------------------------");
+            System.out.print("Email    : ");
+            String email = br.readLine();
+            System.out.print("Password : ");
+            String password = br.readLine();
 
-		        case ADMIN:
-		            System.out.println("\n===== ADMIN DASHBOARD =====");
-		            break;
+            UserDTO loggedInUser = authController.adminLogin(email, password);
 
-		        case DOCTOR:
-		            System.out.println("\n===== DOCTOR DASHBOARD =====");
-		            break;
+            if (loggedInUser == null) {
+                System.out.println("\nInvalid Email or Password!");
+                return;
+            }
 
-		        case RECEPTIONIST:
-		            System.out.println("\n===== RECEPTIONIST DASHBOARD =====");
-		            break;
+            if (loggedInUser.getStatus() == UserStatus.INACTIVE) {
+                System.out.println("\nYour account is deactivated. Please contact the administrator.");
+                return;
+            }
 
-		        default:
-		            System.out.println("Invalid Role!");
-		    }
+            switch (loggedInUser.getRole()) {
+                case ADMIN:
+                    new AdminDashboard(loggedInUser).showDashboard();
+                    break;
+                case DOCTOR:
+                    new DoctorDashboard(loggedInUser).showDashboard();
+                    break;
+                case RECEPTIONIST:
+                    new ReceptionistDashboard(loggedInUser).showDashboard();
+                    break;
+                default:
+                    System.out.println("Unknown role: " + loggedInUser.getRole());
+            }
 
-		} else {
-		    System.out.println("Invalid Email or Password!");
-		}
-		
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-
-	}
-
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

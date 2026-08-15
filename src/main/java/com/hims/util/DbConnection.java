@@ -1,33 +1,32 @@
 package com.hims.util;
 
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.Properties;
 
 public class DbConnection {
-	public Connection con = null;
 
-	public static Connection establishConnection() {
+    private static final String url;
+    private static final String user;
+    private static final String password;
 
-		Connection con = null;
+    static {
+        try (InputStream in = DbConnection.class.getClassLoader()
+                .getResourceAsStream("config.properties")) {
+            Properties props = new Properties();
+            props.load(in);
+            url      = props.getProperty("db.url");
+            user     = props.getProperty("db.user");
+            password = props.getProperty("db.password");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load DB config from config.properties", e);
+        }
+    }
 
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3307/hospital_management_system", "root", "root");
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return con;
-	}
-
-	public static void main(String[] args) {
-		Connection con = DbConnection.establishConnection();
-		if (con != null) {
-			System.out.println("Connected...");
-		} else {
-			System.out.println("Not connected.."); 
-		}
-	}
+    /** Returns a new Connection — caller must close it (use try-with-resources). */
+    public static Connection getConnection() throws Exception {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        return DriverManager.getConnection(url, user, password);
+    }
 }
